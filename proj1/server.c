@@ -158,9 +158,10 @@ void* request_handler(void *arg)
 			fputs(protocol, clnt_write);
 			fflush(clnt_write);
 			fclose(clnt_write);
+			sock_list[id] = -1;
 			pthread_cond_signal(&cond_notuse[id]);
 			pthread_mutex_unlock(&thread_lock[id]);
-			sock_list[id] = -1;
+			
 			continue;
 		}
 
@@ -169,9 +170,10 @@ void* request_handler(void *arg)
 			fputs(protocol, clnt_write);
 			fflush(clnt_write);
 			fclose(clnt_write);
+			sock_list[id] = -1;
 			pthread_cond_signal(&cond_notuse[id]);
 			pthread_mutex_unlock(&thread_lock[id]);
-			sock_list[id] = -1;
+			
 			continue;
 		}
 

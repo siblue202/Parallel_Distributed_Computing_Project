@@ -87,24 +87,30 @@ void *request_handler(void *arg) {
         // int num = rand()%128;
         int num = 0; // for test
         readfp = fdopen(clnt_sock, "r");
+        printf("debug 1\n");
 
         sprintf(msg, "GET %s HTTP/1.0", file[num]);
         send(clnt_sock, msg, sizeof(msg), 0);
-
+        printf("debug 2\n");
         while(1) {
             if (fgets(buf, sizeof(buf), readfp)==NULL)
                 break;
+            printf("debug 3\n");
             // fputs(buf, stdout);
             printf("%s", buf);
+            printf("debug 4\n");
             fflush(stdout);
+            printf("debug 5\n");
         }
 
+        printf("debug 6\n");
         fclose(readfp);
         // pthread_mutex_unlock(&lock);
-        
+        printf("debug 7\n");
         int sleep_time = rand()%10000; // 1초 미만의 랜덤한 request interval
+        printf("debug 8\n");
         usleep(sleep_time);
-        printf("debug 1\n");
+        printf("debug 9\n");
     }
 
 }
