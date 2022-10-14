@@ -185,12 +185,20 @@ void* request_handler(void *arg)
 		fflush(clnt_write);
 		// 요청 데이터 전송
 		printf("debug 16\n");
-		while(fgets(buf, BUF_SIZE, fp)!=NULL) 
-		{
+		while(fgets(buf, BUF_SIZE, fp) != NULL) {
 			printf("debug 17\n");
-			fputs(buf, fp);
-			fflush(fp);
+			send(sock_list[id], buf, BUF_SIZE, 0);
 		}
+		char end_msg[]="quit";
+		send(sock_list[id], end_msg, sizeof(end_msg), 0);
+
+
+		// while(fgets(buf, BUF_SIZE, fp)!=NULL) 
+		// {
+		// 	printf("debug 17\n");
+		// 	fputs(buf, fp);
+		// 	fflush(fp);
+		// }
 
 		printf("debug 19\n");
 		fflush(fp);
