@@ -96,15 +96,22 @@ int main(int argc, char *argv[])
 			printf("Connection Request : %s:%d\n", 
 			inet_ntoa(clnt_addr.sin_addr), ntohs(clnt_addr.sin_port)); // inet_ntoa : 네트워크 바이트 순서를 dotted-10진수로 변경 
 			recv(clnt_sock, msg, sizeof(msg), 0);
+			printf("debug 1\n");
 
 			// thread[id]가 실행중인지 체크 
 			pthread_mutex_lock(&thread_lock[index]);
+			printf("debug 2\n");
 			while(sock_list[index] != -1)
 				pthread_cond_wait(&cond, &thread_lock[index]);
+				printf("debug 3\n");
 			strncpy(msg_list[index], msg, sizeof(msg));
+			printf("debug 4\n");
 			sock_list[index] = clnt_sock;
+			printf("debug 5\n");
 			pthread_cond_broadcast(&cond);
+			printf("debug 6\n");
 			pthread_mutex_unlock(&thread_lock[index]);
+			printf("debug 7\n");
 
 			index++; 
 			index = index % threads_num;
@@ -131,12 +138,18 @@ void* request_handler(void *arg)
 	char protocol[30];
 
 	while(1) {
+		printf("debug 8\n");
 		pthread_mutex_lock(&thread_lock[id]);
-		while (clnt_sock == -1) 
+		printf("debug 9\n");
+		while (clnt_sock == -1) {
 			pthread_cond_wait(&cond, &thread_lock[id]);
+			printf("debug 10\n");
+		}
+		
+		printf("debug 11\n");
 		strncpy(msg, msg_list[id], sizeof(msg));
 		clnt_write=fdopen(dup(clnt_sock), "w");
-		
+		printf("debug 12\n");
 
 		if (sscanf(msg, "%[^ ] %[^ ] %[^ ]", method, file, protocol) != 3) {
 			char protocol[] = "400 Bad Request\r\n";
@@ -155,20 +168,25 @@ void* request_handler(void *arg)
 		}
 
 		fp = fopen(file, "r");
+		printf("debug 15\n");
 
 		char protocol[]="HTTP/1.0 200 OK\r\n";
 		fputs(protocol, clnt_write);
 		fflush(clnt_write);
 		// 요청 데이터 전송
+		printf("debug 16\n");
 		while(fgets(buf, BUF_SIZE, fp)!=NULL) 
 		{
+			printf("debug 17\n");
 			fputs(buf, fp);
 			fflush(fp);
 		}
 
+		printf("debug 19\n");
 		fflush(fp);
 		fclose(fp);
 		fclose(clnt_write);
 		pthread_mutex_unlock(&thread_lock[id]);
+		printf("debug 20\n");
 	}
 }
