@@ -69,14 +69,12 @@ void *request_handler(void *arg) {
     int id = *((int*)arg);
     char msg[SMALL_BUF];
     char buf[BUF_SIZE];
-    int clnt_sock;
-    struct sockaddr_in serv_addr;
 
     FILE * readfp;
     
     for (int i=0; i< request_num; i++) {
-
-        clnt_sock = socket(AF_INET, SOCK_STREAM, 0); // TCP 소켓 생성 
+        struct sockaddr_in serv_addr;
+        int clnt_sock = socket(AF_INET, SOCK_STREAM, 0); // TCP 소켓 생성 
 
         // 서버 주소정보 초기화
 	    memset(&serv_addr, 0, sizeof(serv_addr));
