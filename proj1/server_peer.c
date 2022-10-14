@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <sys/epoll.h>
 #include <sys/stat.h>
+#include <arpa/inet.h>
 
 #define SERVER_URL "127.0.0.1"
 #define PROTOCOL "HTTP/1.0"
