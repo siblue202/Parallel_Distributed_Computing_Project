@@ -19,12 +19,13 @@ void* request_handler(void* arg);
 
 char file[128][32];
 int request_num;
+pthread_t tid[128];
 pthread_mutex_t lock;
+int port;
 
 int main(int argc, char** argv) {
     int serv_sock, clnt_sock;
-    struct sockaddr_in serv_addr;
-    pthread_t tid;
+    
     FILE *fp;
     char filename[16];
     int threads_num;
@@ -46,25 +47,14 @@ int main(int argc, char** argv) {
         index++;
     }
 
-    clnt_sock = socket(AF_INET, SOCK_STREAM, 0); // TCP 소켓 생성 
-
-    // 서버 주소정보 초기화
-	memset(&serv_addr, 0, sizeof(serv_addr));
-	serv_addr.sin_family=AF_INET; // 주소체계 정하기 af : address family. 
-	serv_addr.sin_addr.s_addr=inet_addr(SERV_URL); // INADDR_ANY는 자동으로 이 컴퓨터에 존재하는 랜카드 중 사용가능한 랜카드의 IP주소를 사용하라는 의미
-	serv_addr.sin_port = htons(atoi(argv[1])); // htons <-> ntohs
-
-    if (connect(clnt_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        printf("Error: connection to clinet failed in server\n");
-        exit(1);
-    }
-
+    int thread_id[threads_num];
     pthread_mutex_init(&lock, NULL);
     for (int i=0; i<threads_num; i++) {
-        pthread_create(&tid, NULL, request_handler, &clnt_sock);
-        pthread_detach(tid);
+        thread_id[i] = i;
+        pthread_create(&tid[i], NULL, request_handler, &thread_id[i]);
+        pthread_detach(tid[i]);
     }
-
+    
     while (1) {
         
     }
@@ -76,13 +66,29 @@ int main(int argc, char** argv) {
 }
 
 void *request_handler(void *arg) {
-    int clnt_sock = *((int*)arg);
+    int id = *((int*)arg);
     char msg[SMALL_BUF];
     char buf[BUF_SIZE];
+    int clnt_sock;
+    struct sockaddr_in serv_addr;
 
     FILE * readfp;
     
     for (int i=0; i< request_num; i++) {
+
+        clnt_sock = socket(AF_INET, SOCK_STREAM, 0); // TCP 소켓 생성 
+
+        // 서버 주소정보 초기화
+	    memset(&serv_addr, 0, sizeof(serv_addr));
+	    serv_addr.sin_family=AF_INET; // 주소체계 정하기 af : address family. 
+	    serv_addr.sin_addr.s_addr=inet_addr(SERV_URL); // INADDR_ANY는 자동으로 이 컴퓨터에 존재하는 랜카드 중 사용가능한 랜카드의 IP주소를 사용하라는 의미
+	    serv_addr.sin_port = htons(atoi(port)); // htons <-> ntohs
+
+        if (connect(clnt_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+            printf("Error: connection to clinet failed in server\n");
+            exit(1);
+        }
+
         // pthread_mutex_lock(&lock);
         // int num = rand()%128;
         int num = 0; // for test
@@ -107,6 +113,7 @@ void *request_handler(void *arg) {
             recv(clnt_sock, buf, sizeof(buf), 0);
             if (strstr(buf, "quit") != NULL) {
                 printf("connection completed\n");
+                memset(buf, 0, sizeof(buf));
                 break;
             } 
             printf("%s", buf);
