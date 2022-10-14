@@ -16,7 +16,8 @@ void* request_handler(void* arg);
 
 pthread_mutex_t lock[FILE_NUM];
 pthread_mutex_t queue;
-pthread_cond_t cond;
+pthread_cond_t cond_use[128];
+pthread_cond_t cond_notuse[128];
 
 char msg_list[128][100];
 pthread_t t_id[128];
@@ -62,11 +63,13 @@ int main(int argc, char *argv[])
 	}
 
 	pthread_mutex_init(&queue, NULL);
-	pthread_cond_init(&cond, NULL);	
+	
 	int thread_id[threads_num];
 	for (int i=0; i< threads_num; i++) {
 		thread_id[i] = i;
 		pthread_mutex_init(&thread_lock[i], NULL);
+		pthread_cond_init(&cond_use[i], NULL);	
+		pthread_cond_init(&cond_notuse[i], NULL);
 		pthread_create(&t_id[i], NULL, request_handler, &thread_id[i]);	// 스레드 생성 및 실행
 		pthread_detach(t_id[i]);	// 종료된 스레드의 리소스 소멸
 	}
@@ -102,13 +105,13 @@ int main(int argc, char *argv[])
 			pthread_mutex_lock(&thread_lock[index]);
 			printf("debug 2\n");
 			while(sock_list[index] != -1)
-				pthread_cond_wait(&cond, &thread_lock[index]);
+				pthread_cond_wait(&cond_notuse[index], &thread_lock[index]);
 				printf("debug 3\n");
 			strncpy(msg_list[index], msg, sizeof(msg));
 			printf("debug 4\n");
 			sock_list[index] = clnt_sock;
 			printf("debug 5\n");
-			pthread_cond_broadcast(&cond);
+			pthread_cond_signal(&cond_use[index]);
 			printf("debug 6\n");
 			pthread_mutex_unlock(&thread_lock[index]);
 			printf("debug 7\n");
@@ -142,7 +145,7 @@ void* request_handler(void *arg)
 		pthread_mutex_lock(&thread_lock[id]);
 		printf("debug 9\n");
 		while (clnt_sock == -1) {
-			pthread_cond_wait(&cond, &thread_lock[id]);
+			pthread_cond_wait(&cond_use[id], &thread_lock[id]);
 			printf("debug 10\n");
 		}
 		
@@ -186,6 +189,9 @@ void* request_handler(void *arg)
 		fflush(fp);
 		fclose(fp);
 		fclose(clnt_write);
+
+		sock_list[-1] = -1;
+		pthread_cond_signal(&cond_notuse[id]);
 		pthread_mutex_unlock(&thread_lock[id]);
 		printf("debug 20\n");
 	}
