@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <pthread.h>
 #include <stdbool.h>
+#include <time.h>
 
 // https://mangkyu.tistory.com/48
 // https://recipes4dev.tistory.com/153
@@ -81,12 +82,15 @@ void *request_handler(void *arg) {
     char msg[SMALL_BUF];
     char buf[BUF_SIZE];
     int clnt_sock;
+    clock_t start, end;
 
     FILE * readfp;
+
+    unsigned long size = 0;
     
     for (int i=0; i< request_num; i++) {
-        
-        
+        srand(time(NULL));
+        start = clock();
         if ((clnt_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) { // TCP 소켓 생성 
             printf("[thread %d]Error: Unable to open socket in server.\n", id);
             exit(1);
@@ -118,21 +122,27 @@ void *request_handler(void *arg) {
         // }
 
         while(1) {
-            recv(clnt_sock, buf, sizeof(buf), 0);
+            unsigned long tmp = recv(clnt_sock, buf, sizeof(buf), 0);
             if (strstr(buf, "quit") != NULL) {
-                printf("connection completed\n");
+                printf("[thread %d]Iter%d connection completed\n", id, i);
                 memset(buf, 0, sizeof(buf));
                 break;
             } 
             printf("%s", buf);
+            size += tmp;
         }
 
         fclose(readfp);
 
         close(clnt_sock);
+        printf("[thread %d]Iter%d exec time : %lf\n", id, i, (double)(end-start)/CLOCKS_PER_SEC);
+
+        end = clock();
         // pthread_mutex_unlock(&lock);
         int sleep_time = rand()%10000; // 1초 미만의 랜덤한 request interval
         usleep(sleep_time);
     }
+
+    printf("[thread %d]Total received bytes : %lu\n", id, size);
     exit(1);
 }
