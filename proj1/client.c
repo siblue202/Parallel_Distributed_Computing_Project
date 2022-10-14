@@ -95,7 +95,7 @@ void *request_handler(void *arg) {
             if (fgets(buf, sizeof(buf), readfp)==NULL)
                 break;
             // fputs(buf, stdout);
-            printf("%s\n", buf);
+            printf("%s", buf);
             fflush(stdout);
         }
 
