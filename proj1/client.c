@@ -62,8 +62,6 @@ int main(int argc, char** argv) {
         
     }
     
-    close(clnt_sock);
-
     return 0;
 }
 
@@ -124,6 +122,8 @@ void *request_handler(void *arg) {
 
         printf("debug 6\n");
         fclose(readfp);
+
+        close(clnt_sock);
         // pthread_mutex_unlock(&lock);
         printf("debug 7\n");
         int sleep_time = rand()%10000; // 1초 미만의 랜덤한 request interval
