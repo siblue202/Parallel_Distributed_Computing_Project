@@ -157,7 +157,10 @@ void* request_handler(void *arg)
 			char protocol[] = "400 Bad Request\r\n";
 			fputs(protocol, clnt_write);
 			fflush(clnt_write);
+			fclose(clnt_write);
+			pthread_cond_signal(&cond_notuse[id]);
 			pthread_mutex_unlock(&thread_lock[id]);
+			sock_list[id] = -1;
 			continue;
 		}
 
@@ -165,7 +168,10 @@ void* request_handler(void *arg)
 			char protocol[] = "404 Not Found\r\n";
 			fputs(protocol, clnt_write);
 			fflush(clnt_write);
+			fclose(clnt_write);
+			pthread_cond_signal(&cond_notuse[id]);
 			pthread_mutex_unlock(&thread_lock[id]);
+			sock_list[id] = -1;
 			continue;
 		}
 

@@ -102,8 +102,8 @@ void *request_handler(void *arg) {
         fclose(readfp);
         pthread_mutex_unlock(&lock);
         
-        int sleep_time = rand()%1000; // 1초 미만의 랜덤한 request interval
-        sleep(sleep_time);
+        int sleep_time = rand()%100000; // 1초 미만의 랜덤한 request interval
+        usleep(sleep_time);
     }
 
 }
