@@ -22,6 +22,7 @@ int request_num;
 pthread_t tid[128];
 pthread_mutex_t lock;
 int port;
+int file_num;
 
 int main(int argc, char** argv) {
     int serv_sock, clnt_sock;
@@ -46,6 +47,8 @@ int main(int argc, char** argv) {
     while (fscanf(fp, "%s", file[index]) != EOF) { // 요청할 파일들 읽어오기
         index++;
     }
+    file_num = index;
+    fclose(fp);
 
     int thread_id[threads_num];
     pthread_mutex_init(&lock, NULL);
@@ -58,8 +61,7 @@ int main(int argc, char** argv) {
     while (1) {
         
     }
-
-    fclose(fp);
+    
     close(clnt_sock);
 
     return 0;
@@ -74,16 +76,19 @@ void *request_handler(void *arg) {
     
     for (int i=0; i< request_num; i++) {
         struct sockaddr_in serv_addr;
-        int clnt_sock = socket(AF_INET, SOCK_STREAM, 0); // TCP 소켓 생성 
-
+        int clnt_sock;
+        if (clnt_sock = socket(AF_INET, SOCK_STREAM, 0) < 0) { // TCP 소켓 생성 
+            printf("[thread %d]Error: Unable to open socket in server.\n", id);
+            exit(1);
+        }
         // 서버 주소정보 초기화
 	    memset(&serv_addr, 0, sizeof(serv_addr));
 	    serv_addr.sin_family=AF_INET; // 주소체계 정하기 af : address family. 
 	    serv_addr.sin_addr.s_addr=inet_addr(SERV_URL); // INADDR_ANY는 자동으로 이 컴퓨터에 존재하는 랜카드 중 사용가능한 랜카드의 IP주소를 사용하라는 의미
 	    serv_addr.sin_port = htons(port); // htons <-> ntohs
 
-        if (connect(clnt_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-            printf("Error: connection to clinet failed in server\n");
+        if (connect(clnt_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1) {
+            printf("[thread %d]Error: connection to server failed in client\n", id);
             exit(1);
         }
 
