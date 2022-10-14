@@ -66,12 +66,15 @@ void *worker(void *ptr){
 				ev.events=EPOLLIN;
 				ev.data.fd=client_socket;
 				epoll_ctl(e_fd,EPOLL_CTL_ADD, client_socket, &ev);
+                printf("debug 1\n");
 			}
 			else{	
+                printf("debug 2\n");
 				client_socket=events[i].data.fd;
 				fe=fdopen(client_socket,"r+");
     
-				recv(client_socket, msg, sizeof(msg), 0);
+				printf("debug 3\n");
+                recv(client_socket, msg, sizeof(msg), 0);
                 if (sscanf(msg, "%[^ ] %[^ ] %[^ ]", method, file, protocol) != 3){
                     sprintf(buf, "400 Bad Request\n");
                 }   
@@ -82,24 +85,30 @@ void *worker(void *ptr){
                 if ( f == (FILE*) 0 ){
                     sprintf(buf, "403 Forbidden\n");
                 }
+                printf("debug 4\n");
 
                 for(count = 0; fgets(buf, BUF_SIZE, f) != NULL; count++){}
+                printf("debug 5\n");
 
                 fclose(f);
                 send(client_socket, &count, sizeof(count), 0);
                 f = fopen(file, "r");
+                printf("debug 6\n");
                 
                 for(i=0; i<count; i++){
                     fgets(buf, BUF_SIZE, f);
                     send(client_socket, buf, BUF_SIZE, 0);
                 }
+                printf("debug 7\n");
                 char end_msg[]="quit";
 		        send(client_socket, end_msg, sizeof(end_msg), 0);
                 
+                printf("debug 8\n");
                 fclose(f);
                 ev.events=EPOLLIN;
 				ev.data.fd=client_socket;
 				epoll_ctl(e_fd,EPOLL_CTL_DEL, client_socket, &ev);
+                printf("debug 9\n");
 
 				fclose(fe);
 				printf("success\n");
