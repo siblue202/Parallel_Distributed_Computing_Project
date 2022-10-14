@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
     
     // int status;
     for (index = 0; index < threads_num; index++) {
-        pthread_join(tid[index], (void **)&status);
+        // pthread_join(tid[index], (void **)&status);
         pthread_join(tid[index], NULL);
     }
 
