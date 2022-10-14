@@ -125,11 +125,11 @@ void *request_handler(void *arg) {
         while(1) {
             unsigned long tmp = recv(clnt_sock, buf, sizeof(buf), 0);
             if (strstr(buf, "quit") != NULL) {
-                printf("[thread %d]Iter%d connection completed\n", id, i);
+                // printf("[thread %d]Iter%d connection completed\n", id, i);
                 memset(buf, 0, sizeof(buf));
                 break;
             } 
-            printf("%s", buf);
+            // printf("%s", buf);
             size += tmp;
         }
 
