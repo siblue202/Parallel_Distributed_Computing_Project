@@ -132,7 +132,6 @@ void* request_handler(void *arg)
 	FILE* clnt_write;
 	FILE* fp;
 	struct stat sb;
-	int clnt_sock = sock_list[id];
 	char msg[100];
 	char buf[BUF_SIZE];
 	
@@ -144,14 +143,14 @@ void* request_handler(void *arg)
 		printf("debug 8\n");
 		pthread_mutex_lock(&thread_lock[id]);
 		printf("debug 9\n");
-		while (clnt_sock == -1) {
+		while (sock_list[id] == -1) {
 			pthread_cond_wait(&cond_use[id], &thread_lock[id]);
 			printf("debug 10\n");
 		}
 		
 		printf("debug 11\n");
 		strncpy(msg, msg_list[id], sizeof(msg));
-		clnt_write=fdopen(dup(clnt_sock), "w");
+		clnt_write=fdopen(dup(sock_list[id]), "w");
 		printf("debug 12\n");
 
 		if (sscanf(msg, "%[^ ] %[^ ] %[^ ]", method, file, protocol) != 3) {
