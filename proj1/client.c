@@ -52,7 +52,10 @@ int main(int argc, char** argv) {
 	memset(&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family=AF_INET; // 주소체계 정하기 af : address family. 
 	// serv_addr.sin_addr.s_addr=inet_addr(SERV_URL); // INADDR_ANY는 자동으로 이 컴퓨터에 존재하는 랜카드 중 사용가능한 랜카드의 IP주소를 사용하라는 의미
-	inet_pton(AF_INET, SERV_URL, &serv_addr.sin_addr.s_addr);
+	int rtnValue = inet_pton(AF_INET, SERV_URL, &serv_addr.sin_addr.s_addr);
+    if (rtnValue == 0) printf("invalid addr string\n");
+    else
+        if(rtnValue <0) printf("inet_pton() fails\n");
     serv_addr.sin_port = htons(port); // htons <-> ntohs
 
     int thread_id[threads_num];
