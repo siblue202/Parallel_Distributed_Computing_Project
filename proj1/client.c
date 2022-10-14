@@ -21,7 +21,6 @@ char file[128][32];
 int request_num;
 pthread_t tid[128];
 pthread_mutex_t lock;
-int port;
 int file_num;
 struct sockaddr_in serv_addr;
 
@@ -77,12 +76,13 @@ void *request_handler(void *arg) {
     int id = *((int*)arg);
     char msg[SMALL_BUF];
     char buf[BUF_SIZE];
+    int clnt_sock;
 
     FILE * readfp;
     
     for (int i=0; i< request_num; i++) {
         
-        int clnt_sock;
+        
         if (clnt_sock = socket(AF_INET, SOCK_STREAM, 0) < 0) { // TCP 소켓 생성 
             printf("[thread %d]Error: Unable to open socket in server.\n", id);
             exit(1);
