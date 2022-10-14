@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     
     int status;
     for (index = 0; index < threads_num; index++) {
-        pthread_join(tid[index], status);
+        pthread_join(tid[index], (void **)&status);
     }
 
     pthread_exit(NULL);
