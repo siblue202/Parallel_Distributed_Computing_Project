@@ -94,7 +94,7 @@ void *request_handler(void *arg) {
         
 
         if (connect(clnt_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1) {
-            printf("[thread %d]Error: connection to server failed in client\n", id);
+            perror("[thread %d]Error: connection to server failed in client\n", id);
             exit(1);
         }
 
