@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <netinet/in.h>
 #include <sys/epoll.h>
+#include <sys/stat.h>
 
 #define SERVER_URL "127.0.0.1"
 #define PROTOCOL "HTTP/1.0"
@@ -92,7 +93,7 @@ void *worker(void *ptr){
                     send(client_socket, buf, BUF_SIZE, 0);
                 }
                 char end_msg[]="quit";
-		        send(sock_list[id], end_msg, sizeof(end_msg), 0);
+		        send(client_socket, end_msg, sizeof(end_msg), 0);
                 
                 fclose(f);
                 ev.events=EPOLLIN;
