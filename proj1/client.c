@@ -100,8 +100,8 @@ void *request_handler(void *arg) {
         }
 
         // pthread_mutex_lock(&lock);
-        // int num = rand()%file_num;
-        int num = 0; // for test
+        int num = rand()%file_num;
+        // int num = 0; // for test
         readfp = fdopen(clnt_sock, "r");
         printf("debug 1\n");
 
