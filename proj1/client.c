@@ -92,15 +92,24 @@ void *request_handler(void *arg) {
         sprintf(msg, "GET %s HTTP/1.0", file[num]);
         send(clnt_sock, msg, sizeof(msg), 0);
         printf("debug 2\n");
+        // while(1) {
+        //     if (fgets(buf, sizeof(buf), readfp)==NULL)
+        //         break;
+        //     printf("debug 3\n");
+        //     // fputs(buf, stdout);
+        //     printf("%s", buf);
+        //     printf("debug 4\n");
+        //     fflush(stdout);
+        //     printf("debug 5\n");
+        // }
+
         while(1) {
-            if (fgets(buf, sizeof(buf), readfp)==NULL)
+            recv(clnt_sock, buf, sizeof(buf), 0);
+            if (strstr(buf, "quit") != NULL) {
+                printf("connection completed\n");
                 break;
-            printf("debug 3\n");
-            // fputs(buf, stdout);
+            } 
             printf("%s", buf);
-            printf("debug 4\n");
-            fflush(stdout);
-            printf("debug 5\n");
         }
 
         printf("debug 6\n");
