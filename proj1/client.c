@@ -55,12 +55,15 @@ int main(int argc, char** argv) {
     for (int i=0; i<threads_num; i++) {
         thread_id[i] = i;
         pthread_create(&tid[i], NULL, request_handler, &thread_id[i]);
-        pthread_detach(tid[i]);
+        // pthread_detach(tid[i]);
+    }
+    
+    int status;
+    for (index = 0; index < threads_num; index++) {
+        pthread_join(tid[index], status);
     }
 
-    while (1) {
-        
-    }
+    pthread_exit(NULL);
     
     return 0;
 }
