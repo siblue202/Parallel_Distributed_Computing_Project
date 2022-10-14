@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 	int rtnValue = inet_pton(AF_INET, SERV_URL, &serv_addr.sin_addr.s_addr);
     if (rtnValue == 0) printf("invalid addr string\n");
     else
-        if(rtnValue <0) printf("inet_pton() fails\n");
+        if(rtnValue <0) printf("inet_pton() fails\n")
     serv_addr.sin_port = htons(port); // htons <-> ntohs
 
     int thread_id[threads_num];
@@ -94,7 +94,8 @@ void *request_handler(void *arg) {
         
 
         if (connect(clnt_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) == -1) {
-            perror("[thread %d]Error: connection to server failed in client\n", id);
+            perror("error in connect()");
+            printf("[thread %d]Error: connection to server failed in client\n", id);
             exit(1);
         }
 
