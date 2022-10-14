@@ -1,0 +1,9 @@
+1. make
+$ make
+
+2. execution
+    2-1. server
+    $ ./server <port> <num of threads>
+
+    2-2. clinet
+    $ ./clinet <port> <num of threads> <num of requests> <filename>
