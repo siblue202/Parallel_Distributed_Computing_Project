@@ -140,5 +140,5 @@ void *request_handler(void *arg) {
         usleep(sleep_time);
         printf("debug 9\n");
     }
-
+    exit(1);
 }
