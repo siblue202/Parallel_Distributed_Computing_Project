@@ -19,7 +19,7 @@ pthread_mutex_t queue;
 pthread_cond_t cond;
 
 char msg_list[128][100];
-pthread_t* t_id[128];
+pthread_t t_id[128];
 int sock_list[128];
 pthread_mutex_t thread_lock[128];
 
@@ -47,8 +47,10 @@ int main(int argc, char *argv[])
 	serv_addr.sin_port = htons(atoi(argv[1])); // htons <-> ntohs
 
 	// 서버 주소 정보를 기반으로 주소할당
-	if(bind(serv_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1)
-		error_handling("bind() error");
+	if(bind(serv_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1) {
+		printf("bind() error\n");
+		return -1;
+	}
 
 	// 파일 수는 4로 가정하고 파일에 대한 lock init
 	for (int i = 0; i< FILE_NUM; i++) {
@@ -138,15 +140,15 @@ void* request_handler(void *arg)
 			continue;
 		}
 
-		fp = fopen(file, "r");
-
-		if ( stat( fp, &sb ) < 0 ) {
+		if (stat(file, &sb) < 0 ) {
 			char protocol[] = "404 Not Found\r\n";
 			fputs(protocol, clnt_write);
 			fflush(clnt_write);
 			pthread_mutex_unlock(&thread_lock[id]);
 			continue;
 		}
+
+		fp = fopen(file, "r");
 
 		char protocol[]="HTTP/1.0 200 OK\r\n";
 		fputs(protocol, clnt_write);
