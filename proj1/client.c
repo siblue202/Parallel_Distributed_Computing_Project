@@ -135,9 +135,9 @@ void *request_handler(void *arg) {
         fclose(readfp);
 
         close(clnt_sock);
-        printf("[thread %d]Iter%d exec time : %lf\n", id, i, (double)(end-start)/CLOCKS_PER_SEC);
-
         end = clock();
+        printf("[thread %d]Iter%d exec time : %lf\n", id, i, (double)(end-start)/CLOCKS_PER_SEC);
+        
         // pthread_mutex_unlock(&lock);
         int sleep_time = rand()%10000; // 1초 미만의 랜덤한 request interval
         usleep(sleep_time);
