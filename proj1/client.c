@@ -79,12 +79,11 @@ void *request_handler(void *arg) {
     int clnt_sock = *((int*)arg);
     char msg[SMALL_BUF];
     char buf[BUF_SIZE];
-    unsigned int count;
 
     FILE * readfp;
     
     for (int i=0; i< request_num; i++) {
-        pthread_mutex_lock(&lock);
+        // pthread_mutex_lock(&lock);
         // int num = rand()%128;
         int num = 0; // for test
         readfp = fdopen(clnt_sock, "r");
@@ -95,15 +94,17 @@ void *request_handler(void *arg) {
         while(1) {
             if (fgets(buf, sizeof(buf), readfp)==NULL)
                 break;
-            fputs(buf, stdout);
+            // fputs(buf, stdout);
+            printf("%s\n", buf);
             fflush(stdout);
         }
 
         fclose(readfp);
-        pthread_mutex_unlock(&lock);
+        // pthread_mutex_unlock(&lock);
         
-        int sleep_time = rand()%100000; // 1초 미만의 랜덤한 request interval
+        int sleep_time = rand()%10000; // 1초 미만의 랜덤한 request interval
         usleep(sleep_time);
+        printf("debug 1\n");
     }
 
 }
