@@ -103,11 +103,9 @@ void *request_handler(void *arg) {
         int num = rand()%file_num;
         // int num = 0; // for test
         readfp = fdopen(clnt_sock, "r");
-        printf("debug 1\n");
 
         sprintf(msg, "GET %s HTTP/1.0", file[num]);
         send(clnt_sock, msg, sizeof(msg), 0);
-        printf("debug 2\n");
         // while(1) {
         //     if (fgets(buf, sizeof(buf), readfp)==NULL)
         //         break;
@@ -129,16 +127,12 @@ void *request_handler(void *arg) {
             printf("%s", buf);
         }
 
-        printf("debug 6\n");
         fclose(readfp);
 
         close(clnt_sock);
         // pthread_mutex_unlock(&lock);
-        printf("debug 7\n");
         int sleep_time = rand()%10000; // 1초 미만의 랜덤한 request interval
-        printf("debug 8\n");
         usleep(sleep_time);
-        printf("debug 9\n");
     }
     exit(1);
 }
