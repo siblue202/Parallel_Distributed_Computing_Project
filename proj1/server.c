@@ -64,13 +64,15 @@ int main(int argc, char *argv[])
 		thread_id[i] = i;
 		pthread_mutex_init(&thread_lock[i], NULL);
 		pthread_create(&t_id[i], NULL, request_handler, &thread_id[i]);	// 스레드 생성 및 실행
-		pthread_detach(t_id);	// 종료된 스레드의 리소스 소멸
+		pthread_detach(&t_id[i]);	// 종료된 스레드의 리소스 소멸
 	}
 
 	// 서버소켓(리스닝 소켓)이 됨.
 	// 연결요청 대기큐가 생성되며, 이 함수호출 이후로부터 클라이언트 연결요청이 가능함. 
-	if(listen(serv_sock, LISTEN_Q)==-1)
-		error_handling("listen() error");
+	if(listen(serv_sock, LISTEN_Q)==-1) {
+		printf("listen() error\n");
+		return -1;
+	}
 
 	// 요청 및 응답
 	while(1)
