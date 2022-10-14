@@ -61,7 +61,6 @@ void *worker(void *ptr){
 				} else {
                     printf("Connection Request : %s:%d\n", 
 			        inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port)); // inet_ntoa : 네트워크 바이트 순서를 dotted-10진수로 변경 
-			        recv(client_socket, msg, sizeof(msg), 0);
                 }
 				ev.events=EPOLLIN;
 				ev.data.fd=client_socket;
