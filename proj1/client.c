@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
     fp = fopen(filename, "r");
 
     int index = 0;
-    while (fscanf(fp, "%s", file[i]) != EOF) { // 요청할 파일들 읽어오기
+    while (fscanf(fp, "%s", file[index]) != EOF) { // 요청할 파일들 읽어오기
         index++;
     }
 
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     // 서버 주소정보 초기화
 	memset(&serv_addr, 0, sizeof(serv_addr));
 	serv_addr.sin_family=AF_INET; // 주소체계 정하기 af : address family. 
-	serv_addr.sin_addr.s_addr=htonl(SERV_URL); // INADDR_ANY는 자동으로 이 컴퓨터에 존재하는 랜카드 중 사용가능한 랜카드의 IP주소를 사용하라는 의미
+	serv_addr.sin_addr.s_addr=inet_addr(SERV_URL); // INADDR_ANY는 자동으로 이 컴퓨터에 존재하는 랜카드 중 사용가능한 랜카드의 IP주소를 사용하라는 의미
 	serv_addr.sin_port = htons(atoi(argv[1])); // htons <-> ntohs
 
     if (connect(clnt_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {

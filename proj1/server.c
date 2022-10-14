@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 		thread_id[i] = i;
 		pthread_mutex_init(&thread_lock[i], NULL);
 		pthread_create(&t_id[i], NULL, request_handler, &thread_id[i]);	// 스레드 생성 및 실행
-		pthread_detach(&t_id[i]);	// 종료된 스레드의 리소스 소멸
+		pthread_detach(t_id[i]);	// 종료된 스레드의 리소스 소멸
 	}
 
 	// 서버소켓(리스닝 소켓)이 됨.
