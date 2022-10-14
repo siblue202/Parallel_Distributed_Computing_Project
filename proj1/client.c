@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
         pthread_create(&tid[i], NULL, request_handler, &thread_id[i]);
         pthread_detach(tid[i]);
     }
-    
+
     while (1) {
         
     }
@@ -82,7 +82,7 @@ void *request_handler(void *arg) {
 	    memset(&serv_addr, 0, sizeof(serv_addr));
 	    serv_addr.sin_family=AF_INET; // 주소체계 정하기 af : address family. 
 	    serv_addr.sin_addr.s_addr=inet_addr(SERV_URL); // INADDR_ANY는 자동으로 이 컴퓨터에 존재하는 랜카드 중 사용가능한 랜카드의 IP주소를 사용하라는 의미
-	    serv_addr.sin_port = htons(atoi(port)); // htons <-> ntohs
+	    serv_addr.sin_port = htons(port); // htons <-> ntohs
 
         if (connect(clnt_sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
             printf("Error: connection to clinet failed in server\n");
