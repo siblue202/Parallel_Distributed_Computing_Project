@@ -57,6 +57,10 @@ int main(int argc, char *argv[])
 		pthread_mutex_init(&lock[i], NULL);
 	}
 
+	for (int i = 0; i< 128; i++) {
+		sock_list[i] = -1;
+	}
+
 	pthread_mutex_init(&queue, NULL);
 	pthread_cond_init(&cond, NULL);	
 	int thread_id[threads_num];
