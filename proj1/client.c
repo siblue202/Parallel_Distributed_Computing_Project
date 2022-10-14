@@ -67,12 +67,13 @@ int main(int argc, char** argv) {
         // pthread_detach(tid[i]);
     }
     
-    int status;
+    // int status;
     for (index = 0; index < threads_num; index++) {
-        pthread_join(tid[index], (void **)&status);
+        // pthread_join(tid[index], (void **)&status);
+        pthread_join(tid[index], NULL);
     }
 
-    pthread_exit(NULL);
+    // pthread_exit(NULL);
     
     return 0;
 }
