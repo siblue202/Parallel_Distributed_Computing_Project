@@ -39,6 +39,27 @@ int main(int argc, char *argv[])
 
 	threads_num = atoi(argv[2]);
 
+	serv_sock=socket(AF_INET, SOCK_STREAM, 0); // TCP 소켓 생성
+
+	// 서버 주소정보 초기화
+	memset(&serv_addr, 0, sizeof(serv_addr));
+	serv_addr.sin_family=AF_INET; // 주소체계 정하기 af : address family. 
+	serv_addr.sin_addr.s_addr=htonl(INADDR_ANY); // INADDR_ANY는 자동으로 이 컴퓨터에 존재하는 랜카드 중 사용가능한 랜카드의 IP주소를 사용하라는 의미
+	serv_addr.sin_port = htons(atoi(argv[1])); // htons <-> ntohs
+
+	// 서버 주소 정보를 기반으로 주소할당
+	if(bind(serv_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1) {
+		printf("bind() error\n");
+		return -1;
+	}
+
+	// 서버소켓(리스닝 소켓)이 됨.
+	// 연결요청 대기큐가 생성되며, 이 함수호출 이후로부터 클라이언트 연결요청이 가능함. 
+	if(listen(serv_sock, LISTEN_Q)== -1) {
+		printf("listen() error\n");
+		return -1;
+	}
+
 	// 파일 수는 4로 가정하고 파일에 대한 lock init
 	for (int i = 0; i< FILE_NUM; i++) {
 		pthread_mutex_init(&lock[i], NULL);
@@ -58,27 +79,6 @@ int main(int argc, char *argv[])
 		pthread_cond_init(&cond_notuse[i], NULL);
 		pthread_create(&t_id[i], NULL, request_handler, &thread_id[i]);	// 스레드 생성 및 실행
 		pthread_detach(t_id[i]);	// 종료된 스레드의 리소스 소멸
-	}
-	
-	serv_sock=socket(AF_INET, SOCK_STREAM, 0); // TCP 소켓 생성
-
-	// 서버 주소정보 초기화
-	memset(&serv_addr, 0, sizeof(serv_addr));
-	serv_addr.sin_family=AF_INET; // 주소체계 정하기 af : address family. 
-	serv_addr.sin_addr.s_addr=htonl(INADDR_ANY); // INADDR_ANY는 자동으로 이 컴퓨터에 존재하는 랜카드 중 사용가능한 랜카드의 IP주소를 사용하라는 의미
-	serv_addr.sin_port = htons(atoi(argv[1])); // htons <-> ntohs
-
-	// 서버 주소 정보를 기반으로 주소할당
-	if(bind(serv_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1) {
-		printf("bind() error\n");
-		return -1;
-	}
-
-	// 서버소켓(리스닝 소켓)이 됨.
-	// 연결요청 대기큐가 생성되며, 이 함수호출 이후로부터 클라이언트 연결요청이 가능함. 
-	if(listen(serv_sock, LISTEN_Q)==-1) {
-		printf("listen() error\n");
-		return -1;
 	}
 
 	// 요청 및 응답
