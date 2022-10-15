@@ -151,7 +151,10 @@ int main(int argc, char **argv){
     for(i=0; i<threads_num; i++){
         pthread_create(&tid, NULL, worker, NULL);
     }
-    pthread_join(tid, (void**)&status);
+    for (i=0; i<threads_num; i++) {
+        pthread_join(tid, (void**)&status);
+    }
+    
 
     while(1){
         //recv(client_socket, msg, sizeof(msg), 0);
