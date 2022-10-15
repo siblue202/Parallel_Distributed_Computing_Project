@@ -151,6 +151,7 @@ void* request_handler(void *arg)
 			send(sock_list[id], end_msg, sizeof(end_msg), 0);
 
 			fclose(clnt_write);
+			clnt_write = -1;
 			sock_list[id] = -1;
 			pthread_cond_signal(&cond_notuse[id]);
 			pthread_mutex_unlock(&thread_lock[id]);
@@ -173,7 +174,7 @@ void* request_handler(void *arg)
 			
 			continue;
 		}
-		
+
 		fp = fopen(file, "r");
 
 		char protocol[]="HTTP/1.0 200 OK\r\n";
@@ -196,7 +197,9 @@ void* request_handler(void *arg)
 
 		fflush(fp);
 		fclose(fp);
+		fp = -1;
 		fclose(clnt_write);
+		clnt_write = -1;
 
 		sock_list[id] = -1;
 		pthread_cond_signal(&cond_notuse[id]);

@@ -140,6 +140,7 @@ void *request_handler(void *arg) {
         fclose(readfp);
 
         close(clnt_sock);
+        clnt_sock = -1;
         end = clock();
         printf("[thread %d]Iter%d exec time : %lf\n", id, i, (double)(end-start)/CLOCKS_PER_SEC);
         
