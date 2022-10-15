@@ -81,13 +81,14 @@ int main(int argc, char *argv[])
 		pthread_detach(t_id[i]);	// 종료된 스레드의 리소스 소멸
 	}
 
+	
+	int index = 0;
 	// 요청 및 응답
 	while(1)
 	{
 		clnt_addr_size=sizeof(clnt_addr);
 		char msg[100];
-		int index = 0;
-
+		if (index >= 1024) index = 0;
 		// 클라이언트 연결요청 수락
 		// 클라이언트와의 송수신을 위해 새로운 소켓 생성
 		clnt_sock=accept(serv_sock, (struct sockaddr*)&clnt_addr, &clnt_addr_size);
@@ -172,7 +173,7 @@ void* request_handler(void *arg)
 			
 			continue;
 		}
-
+		
 		fp = fopen(file, "r");
 
 		char protocol[]="HTTP/1.0 200 OK\r\n";
