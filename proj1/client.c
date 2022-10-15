@@ -87,12 +87,13 @@ void *request_handler(void *arg) {
     char msg[SMALL_BUF];
     char buf[BUF_SIZE];
     int clnt_sock;
-    clock_t start, end;
+    clock_t start, end, t_start, t_end;
 
     FILE * readfp;
 
     unsigned long size = 0;
     
+    t_start = clock();
     for (int i=0; i< request_num; i++) {
         srand(time(NULL));
         start = clock();
@@ -148,6 +149,8 @@ void *request_handler(void *arg) {
         int sleep_time = rand()%10000; // 1초 미만의 랜덤한 request interval
         usleep(sleep_time);
     }
+    t_end = clock();
 
     printf("[thread %d]Total received bytes : %lu\n", id, size);
+    printf("[thread %d]Iter%d exec time : %lf\n", id, i, (double)(t_end-t_start)/CLOCKS_PER_SEC);
 }
