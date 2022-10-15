@@ -152,5 +152,5 @@ void *request_handler(void *arg) {
     t_end = clock();
 
     printf("[thread %d]Total received bytes : %lu\n", id, size);
-    printf("[thread %d]Iter%d exec time : %lf\n", id, i, (double)(t_end-t_start)/CLOCKS_PER_SEC);
+    printf("[thread %d]Total exec time : %lf\n", id, (double)(t_end-t_start)/CLOCKS_PER_SEC);
 }
