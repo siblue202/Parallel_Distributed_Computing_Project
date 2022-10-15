@@ -197,7 +197,6 @@ void* request_handler(void *arg)
 
 		fflush(fp);
 		fclose(fp);
-		fp = -1;
 		fclose(clnt_write);
 		close(sock_list[id]);
 		sock_list[id] = -1;
