@@ -9,7 +9,7 @@ typedef struct {
 	char M,N;
 	int width,height;
 	int max;
-	RGB **pixels;
+	RGB *pixels;
 } PPMImage;
 
 void fnInitPPM(PPMImage* target,PPMImage* img);

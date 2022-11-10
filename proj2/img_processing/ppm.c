@@ -13,18 +13,15 @@ void fnInitPPM(PPMImage* target,PPMImage* img) {
     target->height = img->height;
     target->width = img->width;
 
-	target->pixels = (RGB**)calloc(img->height, sizeof(RGB*));
-	for(i=0; i<img->height; i++){
-	   target->pixels[i] = (RGB*)calloc(img->width, sizeof(RGB));
-	}
+	target->pixels = (RGB*)calloc(img->height * img->width, sizeof(RGB));
 
 	for(i = 0 ; i < img->height ; i++)
 	{
 		for(j = 0 ; j < img->width ;j++)
 		{
-			target->pixels[i][j].R = 0;
-			target->pixels[i][j].G = 0;
-			target->pixels[i][j].B = 0;
+			target->pixels[i*img->width + j].R = 0;
+			target->pixels[i*img->width + j].G = 0;
+			target->pixels[i*img->width + j].B = 0;
 		}
 	}
 }
@@ -62,22 +59,17 @@ int fnReadPPM(char* fileNm, PPMImage* img)
 
 
 	// <-- 메모리 할당
-	img->pixels = (RGB**)calloc(img->height, sizeof(RGB*));
-
-	for(int i=0; i<img->height; i++){
-	   // 1개의 픽셀을 위해 R, G, B 3byte가 필요
-	   img->pixels[i] = (RGB*)calloc(img->width, sizeof(RGB));
-	}
+	img->pixels = (RGB*)calloc(img->height * img->width, sizeof(RGB));
 	// -->
 
 
 	// <-- ppm 파일로부터 픽셀값을 읽어서 할당한 메모리에 load
 	for(int i=0; i<img->height; i++){
 		for(int j=0; j<img->width; j++){
-			// fread(&img->pixels[i][j], sizeof(unsigned char), 1, fp);
-            fread(&img->pixels[i][j].R, sizeof(unsigned char), 1, fp);
-            fread(&img->pixels[i][j].G, sizeof(unsigned char), 1, fp);
-            fread(&img->pixels[i][j].B, sizeof(unsigned char), 1, fp);
+			fread(&img->pixels[i*img->width + j], sizeof(RGB), 1, fp);
+            // fread(&img->pixels[i*img->width + j].R, sizeof(unsigned char), 1, fp);
+            // fread(&img->pixels[i*img->width + j].G, sizeof(unsigned char), 1, fp);
+            // fread(&img->pixels[i*img->width + j].B, sizeof(unsigned char), 1, fp);
 		}
 	}
 	// -->
@@ -104,7 +96,7 @@ int fnWritePPM(char* fileNm, PPMImage* img)
 
 	for(int i=0; i<img->height; i++){
 		for(int j=0; j<img->width; j++){
-            fwrite(&img->pixels[i][j], sizeof(unsigned char), 3, fp);
+            fwrite(&img->pixels[i*img->width + j], sizeof(RGB), 1, fp);
 		}
 		// fprintf(fp, "\n");	// 생략가능
 	}

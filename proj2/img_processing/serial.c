@@ -31,20 +31,26 @@ int main(int argc, char *argv[]) {
             // result.pixels[i][result.width - j -1].R = ori_ppm.pixels[i][j].R;
             // result.pixels[i][result.width - j -1].G = ori_ppm.pixels[i][j].G;
             // result.pixels[i][result.width - j -1].B = ori_ppm.pixels[i][j].B;
-            result.pixels[i][j] = ori_ppm.pixels[i][j];
-            result.pixels[i][result.width - j -1] = ori_ppm.pixels[i][j];
+            result.pixels[i*ori_ppm.width + j] = ori_ppm.pixels[i*ori_ppm.width + j];
+            result.pixels[i*ori_ppm.width + result.width - j -1] = ori_ppm.pixels[i*ori_ppm.width + j];
         }
     }
+
+    fnWritePPM("output/flip.ppm", &result);
 
     // reduce the image to grayscale
     for (i=0; i<ori_ppm.height; i++) {
         for (j=0; j<ori_ppm.width; j++) {
-            unsigned char avg = (result.pixels[i][j].R + result.pixels[i][j].G + result.pixels[i][j].B)/3;
-            result.pixels[i][j].R = avg;
-            result.pixels[i][j].G = avg;
-            result.pixels[i][j].B = avg;
+            unsigned char avg = (result.pixels[i*ori_ppm.width + j].R
+                                + result.pixels[i*ori_ppm.width + j].G
+                                + result.pixels[i*ori_ppm.width + j].B)/3;
+            result.pixels[i*ori_ppm.width + j].R = avg;
+            result.pixels[i*ori_ppm.width + j].G = avg;
+            result.pixels[i*ori_ppm.width + j].B = avg;
         }
     }
+
+    fnWritePPM("output/reduce.ppm", &result);
 
     // smooth the image 
     int dx[] = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
@@ -57,14 +63,14 @@ int main(int argc, char *argv[]) {
                 int ni = i+dx[k];
                 int nj = j+dy[k];
                 if(ni >= 0 && ni < ori_ppm.height && nj >= 0 && nj < ori_ppm.width) {
-                    value += result.pixels[ni][nj].R/9;
-                    value += result.pixels[ni][nj].G/9;
-                    value += result.pixels[ni][nj].B/9;
+                    value += result.pixels[ni*ori_ppm.width + nj].R/9;
+                    value += result.pixels[ni*ori_ppm.width + nj].G/9;
+                    value += result.pixels[ni*ori_ppm.width + nj].B/9;
                 }
             }
-            result.pixels[i][j].R = value;
-            result.pixels[i][j].G = value;
-            result.pixels[i][j].B = value;
+            result.pixels[i*ori_ppm.width + j].R = value;
+            result.pixels[i*ori_ppm.width + j].G = value;
+            result.pixels[i*ori_ppm.width + j].B = value;
         }
     }
 
