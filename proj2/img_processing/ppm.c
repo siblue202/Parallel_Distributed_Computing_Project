@@ -29,6 +29,7 @@ void fnInitPPM(PPMImage* target,PPMImage* img) {
 	}
 }
 
+// source : https://oneday0012.tistory.com/19
 int fnReadPPM(char* fileNm, PPMImage* img)
 {
 	FILE* fp;
@@ -50,13 +51,6 @@ int fnReadPPM(char* fileNm, PPMImage* img)
 		fprintf(stderr, "PPM 이미지 포멧이 아닙니다 : %c%c\n", img->M, img->N);
 		return FALSE;
 	}
-
-    // char buf[PPMREADBUFLEN], *t;
-    // do
-	// { /* Px formats can have # comments after first line */
-	// 	t = fgets(buf, PPMREADBUFLEN, fp);
-	// 	if ( t == NULL ) return FALSE;
-	// } while ( strncmp(buf, "#", 1) == 0 );
 
 	fscanf(fp, "%d %d\n", &img->width, &img->height);	// 가로, 세로 읽기
 	fscanf(fp, "%d\n"   , &img->max                );	// 최대명암도 값
@@ -111,13 +105,6 @@ int fnWritePPM(char* fileNm, PPMImage* img)
 	for(int i=0; i<img->height; i++){
 		for(int j=0; j<img->width; j++){
             fwrite(&img->pixels[i][j], sizeof(unsigned char), 3, fp);
-            // fwrite(&img->pixels[i][j].R, sizeof(unsigned char), 1, fp);
-            // fwrite(&img->pixels[i][j].G, sizeof(unsigned char), 1, fp);
-            // fwrite(&img->pixels[i][j].B, sizeof(unsigned char), 1, fp);
-
-			// fprintf(fp, "%d ", img->pixels[i][j].R);
-			// fprintf(fp, "%d ", img->pixels[i][j].G);
-			// fprintf(fp, "%d ", img->pixels[i][j].B);
 		}
 		// fprintf(fp, "\n");	// 생략가능
 	}
