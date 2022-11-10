@@ -48,7 +48,6 @@ int main(int argc, char *argv[]) {
     fnInitPPM(&result, &ori_ppm);
     fnInitPPM(&tmp_ppm, &ori_ppm);
     setup_time = MPI_Wtime();
-    printf("sibal 1\n");
 
     // Calculate own index range
     int h_start = (ori_ppm.height * rank) / size;
@@ -62,7 +61,6 @@ int main(int argc, char *argv[]) {
         }
     }
     flip_time = MPI_Wtime();
-    printf("sibal 2\n");
 
     // reduce the image to grayscale
     for (i=h_start; i<h_end; i++) {
@@ -76,7 +74,6 @@ int main(int argc, char *argv[]) {
         }
     }
     gray_time = MPI_Wtime();
-    printf("sibal 3\n");
 
     int len_height = (h_end - h_start) * ori_ppm.width;
     int counts[size];
@@ -88,48 +85,18 @@ int main(int argc, char *argv[]) {
         displ[i] = displ[i-1] + counts[i-1];
     }
 
-    // MPI_Datatype conti_MPI;
-    // MPI_Type_contiguous(ori_ppm.width, rgbMPI, &conti_MPI);
-    // MPI_Type_commit(&conti_MPI);
-
     // for sync
     MPI_Barrier(MPI_COMM_WORLD);
     mpi1_start = MPI_Wtime();
     MPI_Allgatherv(&result.pixels[h_start * ori_ppm.width], len_height, rgbMPI, tmp_ppm.pixels, counts, displ, rgbMPI, MPI_COMM_WORLD); 
 
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // for (i=h_start; i<h_end; i++) {
-    //     for (j=0; j<ori_ppm.width; j++) {
-    //         MPI_Bcast(&result.pixels[i][j], 1, rgbMPI, rank, MPI_COMM_WORLD);
-    //     }
-    // }
-
     // For sync
     MPI_Barrier(MPI_COMM_WORLD);
     mpi1_end = MPI_Wtime();
-    printf("sibal 4\n");
 
     // Smooth the image 
     int dx[] = {-1, -1, -1, 0, 0, 0, 1, 1, 1};
     int dy[] = {-1, 0, 1, -1, 0, 1, -1, 0, 1};
-
-    // for (i=h_start; i<h_end; i++) {
-    //     for (j=0; j<ori_ppm.width; j++) {
-    //         unsigned char value = 0;
-    //         for (k=0; k<9; k++) {
-    //             int ni = i+dx[k];
-    //             int nj = j+dy[k];
-    //             if(ni >= 0 && ni < ori_ppm.height && nj >= 0 && nj < ori_ppm.width) {
-    //                 value += result.pixels[ni][nj].R/9;
-    //                 value += result.pixels[ni][nj].G/9;
-    //                 value += result.pixels[ni][nj].B/9;
-    //             }
-    //         }
-    //         result.pixels[i][j].R = value;
-    //         result.pixels[i][j].G = value;
-    //         result.pixels[i][j].B = value;
-    //     }
-    // }
 
     for (i=h_start; i<h_end; i++) {
         for (j=0; j<ori_ppm.width; j++) {
@@ -149,26 +116,12 @@ int main(int argc, char *argv[]) {
         }
     }
     smooth_time = MPI_Wtime();
-    printf("sibal 5\n");
 
     
     // For sync
     MPI_Barrier(MPI_COMM_WORLD);
     mpi2_start = MPI_Wtime();
     MPI_Allgatherv(&tmp_ppm.pixels[h_start * ori_ppm.width], len_height, rgbMPI, result.pixels, counts, displ, rgbMPI, MPI_COMM_WORLD); 
-
-    // for (i=h_start; i<h_end; i++) {
-    //     MPI_Bcast(result.pixels[i], ori_ppm.width, rgbMPI, rank, MPI_COMM_WORLD);
-    // }
-
-    // MPI_Barrier(MPI_COMM_WORLD);
-    // for (i=h_start; i<h_end; i++) {
-    //     for (j=0; j<ori_ppm.width; j++) {
-    //         MPI_Bcast(&result.pixels[i][j], 1, rgbMPI, rank, MPI_COMM_WORLD);
-    //     }
-    // }
-    printf("sibal 6\n");
-
     
     mpi2_end = MPI_Wtime();
 
@@ -176,12 +129,11 @@ int main(int argc, char *argv[]) {
         fnWritePPM(output_file, &result);
     }
     out_time = MPI_Wtime();
-    printf("sibal 7\n");
     
-    // fnClosePPM(&ori_ppm);
-    // fnClosePPM(&result);
+    fnClosePPM(&ori_ppm);
+    fnClosePPM(&result);
+    fnClosePPM(&tmp_ppm);
     close_time = MPI_Wtime();
-    printf("sibal 8\n");
 
     if (rank == 0) {
         double setup, flip, gray, smooth, out, close, mpi1, mpi2;
