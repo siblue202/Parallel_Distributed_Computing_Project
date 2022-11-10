@@ -1,0 +1,5 @@
+1. make
+    $ make
+
+2. execution
+    $ run.sh <num_of_processors>

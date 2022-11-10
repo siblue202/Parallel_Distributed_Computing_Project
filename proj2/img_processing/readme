@@ -1,0 +1,5 @@
+1. make
+$ make
+
+2. execution 
+    $ ./run.sh <num of processors> <input_file> <serial_output> <parallel_output>

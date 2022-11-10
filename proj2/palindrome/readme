@@ -1,0 +1,5 @@
+1. make 
+    $ make
+
+2. execution
+    $ ./palindrome <num_of_thread> <input_file> <output_file>
