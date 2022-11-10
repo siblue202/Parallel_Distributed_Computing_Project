@@ -137,6 +137,7 @@ int main(int argc, char *argv[]) {
 
     if (rank == 0) {
         double setup, flip, gray, smooth, out, close, mpi1, mpi2;
+        double serial, parallel;
         setup = setup_time - start_time;
         flip = flip_time - setup_time;
         gray = gray_time - flip_time;
@@ -146,8 +147,10 @@ int main(int argc, char *argv[]) {
         mpi1 = mpi1_end - mpi1_start;
         mpi2 = mpi2_end - mpi2_start;
 
-        time_s = setup + out + close;
-        time_p = flip + gray + smooth + mpi1 + mpi2;
+        serial = setup + out + close;
+        parallel = flip + gray + smooth + mpi1 + mpi2;
+        time_s = serial + (parallel * size);
+        time_p = serial + parallel;
 
         speedup = time_s/time_p;
         effi = speedup/size;
